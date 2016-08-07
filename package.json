@@ -1,0 +1,26 @@
+{
+  "name": "docr-blob",
+  "version": "0.0.1",
+  "description": "Storage service for files for docr",
+  "main": "lib/server.js",
+  "scripts": {
+    "start": "coffee src/lib/server.coffee",
+    "test": "coffee src/test/*.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kba/docr-blob.git"
+  },
+  "author": "kba",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/kba/docr-blob/issues"
+  },
+  "homepage": "https://github.com/kba/docr-blob#readme",
+  "dependencies": {
+    "async": "^2.0.1",
+    "express": "^4.14.0",
+    "mkdirp": "^0.5.1",
+    "multiparty": "^4.1.2"
+  }
+}
