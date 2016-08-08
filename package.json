@@ -2,7 +2,7 @@
   "name": "docr-blob",
   "version": "0.0.1",
   "description": "Storage service for files for docr",
-  "main": "lib/server.js",
+  "main": "lib/index.js",
   "scripts": {
     "start": "coffee src/lib/server.coffee",
     "test": "coffee src/test/*.coffee"

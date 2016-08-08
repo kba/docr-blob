@@ -16,11 +16,11 @@ BlobRoute.post '/', (req, res, next) ->
 				Fs.readFile file.path, (err, data) ->
 					return doneFile err if err
 					file.sha1 = Crypto.createHash('sha1').update(data).digest('hex')
-					Mkdirp Config.blobFolder, (err) ->
+					Mkdirp Config.blob.folder, (err) ->
 						return doneFile err if err
-						Fs.writeFile "#{Config.blobFolder}/#{file.sha1}", data, (err) ->
+						Fs.writeFile "#{Config.blob.folder}/#{file.sha1}", data, (err) ->
 							return doneFile err if err
-							file.path = "#{Config.blobFolder}/#{file.sha1}"
+							file.path = "#{Config.blob.folder}/#{file.sha1}"
 							Fs.writeFile "#{file.path}.meta", JSON.stringify(file), (err) ->
 								return doneFile err if err
 								doneFile()
@@ -30,7 +30,7 @@ BlobRoute.post '/', (req, res, next) ->
 			res.send fileFields
 
 BlobRoute.get '/:sha1', (req, res, next) ->
-	fpath = "#{Config.blobFolder}/#{req.params.sha1}"
+	fpath = "#{Config.blob.folder}/#{req.params.sha1}"
 	metaPath = "#{fpath}.meta"
 	Fs.readFile metaPath, (err,metaBytes) ->
 		return next err if err
@@ -42,7 +42,7 @@ BlobRoute.get '/:sha1', (req, res, next) ->
 			res.send data
 
 BlobRoute.get '/:sha1/meta', (req, res, next) ->
-	fpath = "#{Config.blobFolder}/#{req.params.sha1}.meta"
+	fpath = "#{Config.blob.folder}/#{req.params.sha1}.meta"
 	Fs.readFile fpath, (err, data) ->
 		return next err if err
 		res.header 'content-type', 'application/json'
