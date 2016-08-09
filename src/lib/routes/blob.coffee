@@ -1,4 +1,4 @@
-{Config} = require 'docr-common'
+{Config, Utils} = require 'docr-common'
 Express = require 'express'
 Multiparty = require 'multiparty'
 Crypto = require 'crypto'
@@ -6,9 +6,12 @@ Async = require 'async'
 Fs = require 'fs'
 Mkdirp = require 'mkdirp'
 
+log = require('easylog')(module)
+
 module.exports = BlobRoute = Express.Router()
 
 BlobRoute.post '/', (req, res, next) ->
+	log.debug "POST /"
 	form = new Multiparty.Form()
 	form.parse req, (err, fields, fileFields) ->
 		Async.eachOf fileFields, (files, fieldName, doneFileFields) ->
@@ -22,6 +25,7 @@ BlobRoute.post '/', (req, res, next) ->
 							return doneFile err if err
 							file.path = "#{Config.blob.folder}/#{file.sha1}"
 							Fs.writeFile "#{file.path}.meta", JSON.stringify(file), (err) ->
+								log.debug "Stored file at #{file.path}", file
 								return doneFile err if err
 								doneFile()
 			, doneFileFields
@@ -30,7 +34,8 @@ BlobRoute.post '/', (req, res, next) ->
 			res.send fileFields
 
 BlobRoute.get '/:sha1', (req, res, next) ->
-	fpath = "#{Config.blob.folder}/#{req.params.sha1}"
+	log.debug "GET /#{req.params.sha1}"
+	fpath = "#{Config.blob.folder}/#{Utils.cleanURI req.params.sha1}"
 	metaPath = "#{fpath}.meta"
 	Fs.readFile metaPath, (err,metaBytes) ->
 		return next err if err
@@ -42,6 +47,7 @@ BlobRoute.get '/:sha1', (req, res, next) ->
 			res.send data
 
 BlobRoute.get '/:sha1/meta', (req, res, next) ->
+	log.debug "GET /#{req.params.sha1}/meta"
 	fpath = "#{Config.blob.folder}/#{req.params.sha1}.meta"
 	Fs.readFile fpath, (err, data) ->
 		return next err if err
